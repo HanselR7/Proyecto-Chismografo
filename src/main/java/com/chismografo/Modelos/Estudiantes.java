@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Data //Hace que los atributos tengan getter y setters gracias a lombok
 @NoArgsConstructor //Genera constructor vacio
 @AllArgsConstructor //Genera constructor con todos los atributos
