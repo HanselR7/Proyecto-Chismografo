@@ -17,5 +17,9 @@ public class MateriaServicio {
         return materiaRepository.findAll();
     }
 
+    public Materia guardarMateria(Materia materia){
+        return materiaRepository.save(materia);
+    }
+
 
 }

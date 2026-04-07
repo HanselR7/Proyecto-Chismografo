@@ -12,7 +12,7 @@ import java.util.List;
 @Data //Genara los Getters & Stters
 @NoArgsConstructor //Genera un constructor vacio
 @AllArgsConstructor //Genera el contrsctor con todos los atributos de la clase
-@Document(collection = "Materias") //Enlazamos con nuestra coleccion de MongoDB
+@Document(collection = "materias") //Enlazamos con nuestra coleccion de MongoDB
 public class Materia {
     /*Atributos de clase*/
     @Id //Decmos que el siguiente atributo sera el id de la coleccion de mongo
