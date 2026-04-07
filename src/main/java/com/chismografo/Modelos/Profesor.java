@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor //no genera un constructor vacio
 @AllArgsConstructor //crea un constructor con todas sus variables
 
-public class Profesor {
+public class Profesor extends Usuario {
  private String especialidad;
  private List<String> materias = new ArrayList<>();
 }

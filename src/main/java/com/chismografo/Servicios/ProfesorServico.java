@@ -16,4 +16,8 @@ public class ProfesorServico {
     public List<Profesor> obetenerTutores(){
         return profesorRepository.findAll();
     }
+
+    public Profesor guardarProfesor(Profesor profesor){
+        return profesorRepository.save(profesor);
+    }
 }

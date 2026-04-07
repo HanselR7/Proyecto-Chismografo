@@ -1,4 +1,4 @@
-package com.chismografo.controladores;
+package com.chismografo.Controladores;
 
 import com.chismografo.Modelos.Tutor;
 import com.chismografo.Servicios.TutorServicio;
