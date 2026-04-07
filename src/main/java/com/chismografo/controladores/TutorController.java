@@ -1,16 +1,15 @@
-package com.chismografo.controladores;
+package com.chismografo.Controladores;
 
 import com.chismografo.Modelos.Tutor;
 import com.chismografo.Servicios.TutorServicio;
 import com.chismografo.utils.ModelResponse;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -60,6 +59,32 @@ public class TutorController {
 
         } catch (Exception e) {
             response.setMensaje("Error: " + e.getMessage());
+            response.setCodigo(500);
+            return new ResponseEntity<>(gson.toJson(response), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/guardarTutor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> guardarTutor(@RequestBody String tutorSinIDJSON) {
+        ModelResponse<Tutor> response = new ModelResponse<>();
+        Gson gson = new Gson();
+
+        try {
+            Tutor tutorSinID = gson.fromJson(tutorSinIDJSON, Tutor.class);
+            tutorSinID.setRol("tutor");
+
+            Tutor tutorNuevo = tutorServicio.guardarTutor(tutorSinID);
+
+            response.setMensaje("Tutor agregado con exito");
+            response.setCodigo(200);
+            response.setData(tutorNuevo);
+
+            Type type = new TypeToken<ModelResponse<Tutor>>(){}.getType();
+
+            return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.OK);
+        } catch (Exception e) {
+            response.setMensaje("Error al momento de guardar al tutor: " + e.getMessage());
+            System.out.println("Error al momento de guardar al tutor: " + e.getMessage());
             response.setCodigo(500);
             return new ResponseEntity<>(gson.toJson(response), HttpStatus.INTERNAL_SERVER_ERROR);
         }
