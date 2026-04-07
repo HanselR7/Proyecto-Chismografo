@@ -3,6 +3,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+/*Clase para mandar el codigo de error*/
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

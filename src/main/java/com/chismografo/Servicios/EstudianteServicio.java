@@ -18,4 +18,9 @@ public class EstudianteServicio {
     public List<Estudiantes> obtenerTodosEstudiantes() {
         return estudianteRepository.findAll();
     }
+
+    public Estudiantes guardarEstudiante(Estudiantes estudiante){
+        return estudianteRepository.save(estudiante);
+    }
+
 }
