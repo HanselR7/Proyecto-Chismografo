@@ -20,4 +20,8 @@ public class TutorServicio {
     public List<Tutor> obtenerTutoresPorRol() {
         return tutorRepository.findByRol("tutor");
     }
+
+    public Tutor guardarTutor(Tutor tutor) {
+        return tutorRepository.save(tutor);
+    }
 }
