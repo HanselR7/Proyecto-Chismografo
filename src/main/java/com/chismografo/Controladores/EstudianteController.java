@@ -1,6 +1,7 @@
 package com.chismografo.Controladores;
 
 import com.chismografo.Modelos.Estudiantes;
+import com.chismografo.Modelos.Tutor;
 import com.chismografo.Servicios.EstudianteServicio;
 import com.chismografo.utils.ModelResponse;
 import com.google.gson.Gson;
@@ -11,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.Media;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -23,9 +23,16 @@ public class EstudianteController {
     @Autowired
     private EstudianteServicio estudianteServicio;
 
-    @GetMapping("/obtenerEstduaintes")
-    public List<Estudiantes> obtenerEstudiantes(){
-        return estudianteServicio.obtenerTodosEstudiantes();
+    @GetMapping(value = "/obtenerEstduaintes", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> obtenerEstudiantes(){
+        Gson gson = new Gson();
+        try {
+            List<Estudiantes> estudiantes = estudianteServicio.obtenerTodosEstudiantes();
+            return ResponseEntity.ok(gson.toJson(estudiantes));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"" + e.getMessage() + "\"}");
+        }
     }
 
     /*produces = responder, cosume = consumir*/
@@ -37,6 +44,7 @@ public class EstudianteController {
 
         try{
             Estudiantes estudianteSinID = gson.fromJson(estdianteSinIDJSON, Estudiantes.class);
+            estudianteSinID.setRol("estudiante");
             Estudiantes estudiantesNuevo = estudianteServicio.guardarEstudiante(estudianteSinID);
             
             response.setMensaje("Estudiante guardado correctamente");
@@ -44,7 +52,7 @@ public class EstudianteController {
             response.setData(estudiantesNuevo);
 
             Type type = new TypeToken<ModelResponse<Estudiantes>>(){}.getType();
-            return new ResponseEntity<>(gson.toJson(response), HttpStatus.OK);
+            return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.OK);
         }catch (Exception e){
             response.setMensaje("Error al guardar estudiante" + e.getMessage());
             System.out.println("Error al guardar estudiante" + e.getMessage());
