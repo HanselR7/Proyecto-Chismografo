@@ -80,11 +80,39 @@ public class TutorController {
             response.setData(tutorNuevo);
 
             Type type = new TypeToken<ModelResponse<Tutor>>(){}.getType();
-
             return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.OK);
         } catch (Exception e) {
             response.setMensaje("Error al momento de guardar al tutor: " + e.getMessage());
             System.out.println("Error al momento de guardar al tutor: " + e.getMessage());
+            response.setCodigo(500);
+            return new ResponseEntity<>(gson.toJson(response), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/actualizarTutor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> actualizarTutor(@RequestBody String tutorJSON) {
+        ModelResponse<Tutor> response = new ModelResponse<>();
+        Gson gson = new Gson();
+
+        try {
+            Tutor tutor = gson.fromJson(tutorJSON, Tutor.class);
+            if (tutor.getId() == null) {
+                response.setMensaje("ID Obligatorio");
+                response.setCodigo(400);
+                Type type = new TypeToken<ModelResponse<Tutor>>(){}.getType();
+                return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.BAD_REQUEST);
+            }
+
+            Tutor actualizado = tutorServicio.guardarTutor(tutor);
+            response.setMensaje("Tutor actualizado con exito");
+            response.setCodigo(200);
+            response.setData(actualizado);
+
+            Type type = new TypeToken<ModelResponse<Tutor>>(){}.getType();
+            return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.OK);
+        } catch (Exception e ) {
+            response.setMensaje("Error al momento de actualizar al tutor: " + e.getMessage());
+            System.out.println("Error al momento de actualizar al tutor: " + e.getMessage());
             response.setCodigo(500);
             return new ResponseEntity<>(gson.toJson(response), HttpStatus.INTERNAL_SERVER_ERROR);
         }
