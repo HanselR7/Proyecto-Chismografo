@@ -13,7 +13,7 @@ import java.util.List;
 @Data //Hace que los atributos tengan getter y setters gracias a lombok
 @NoArgsConstructor //Genera constructor vacio
 @AllArgsConstructor //Genera constructor con todos los atributos
-@Document(collection = "estudiantes")
+
 public class Estudiantes extends Usuario {
     private String tutorId;
     private List<String> materiasInscritas = new ArrayList<>();
