@@ -21,5 +21,18 @@ public class MateriaServicio {
         return materiaRepository.save(materia);
     }
 
+    public boolean elimiarMateria(String materiaById){
+        if(materiaRepository.existsById(materiaById)){
+            materiaRepository.deleteById(materiaById);
+            return true;
+        }
+        return false;
+    }
+
+    public Materia eliminarMateria (Materia materia){
+         materiaRepository.deleteById(materia.getId());
+        return materia;
+    }
+
 
 }

@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository //Generador de consultas
 public interface MateriaRepository extends MongoRepository<Materia, String> {
-
 }
