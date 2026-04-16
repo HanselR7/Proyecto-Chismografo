@@ -2,6 +2,7 @@ package com.chismografo.Controladores;
 
 import com.chismografo.Modelos.Profesor;
 
+import com.chismografo.Modelos.Tutor;
 import com.chismografo.Servicios.ProfesorServico;
 
 import com.chismografo.utils.ModelResponse;
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/profesor")
@@ -22,35 +24,111 @@ public class profeController {
    @Autowired
    private ProfesorServico profesorServico;
 
-   @GetMapping (value = "/obtenerProfesores", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Profesor> obtenerProfesores(){
+   @GetMapping(value = "/obtenerProfesores", produces = MediaType.APPLICATION_JSON_VALUE)
+   public ResponseEntity<String> obtenerProfesor(@RequestBody String profesorSinIDjSDN) {
+      ModelResponse<List<Profesor>> response = new ModelResponse<>();
+      Gson gson = new Gson();
+      Type type = new TypeToken<ModelResponse<List<Profesor>>>() {
+      }.getType();
+      try {
+         List<Profesor> listaProfes = profesorServico.obetenerTutores();
+         response.setMensaje("aqui estan los profes :) ");
+         response.setCodigo(200);
+         response.setData(listaProfes);
+         return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.OK);
+      } catch (Exception e) {
+         response.setMensaje("error al momento de obtener el profe: " + e.getMessage());
+         System.out.println("error al menonte de obtener el profe: " + e.getMessage());
+         response.setCodigo(500);
+         return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
+      }
 
-       return profesorServico.obetenerTutores() ;
    }
-   @PostMapping(value ="/guardarProfesor", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<String> guardarProfesor(@RequestBody String profesorSinIDjSDN){
+
+   @PostMapping(value = "/guardarProfesor", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+   public ResponseEntity<String> guardarProfesor(@RequestBody String profesorSinIDjSDN) {
       ModelResponse<Profesor> response = new ModelResponse<>();
       Gson gson = new Gson();
-      try{
+      try {
          Profesor profesorSinID = gson.fromJson(profesorSinIDjSDN, Profesor.class);
          profesorSinID.setRol("profe");
 
          Profesor profesorNuevo = profesorServico.guardarProfesor(profesorSinID);
 
-         response.setMensaje("profesor agregado con exito : " );
+         response.setMensaje("profesor agregado con exito : ");
          response.setCodigo(200);
          response.setData(profesorNuevo);
 
-         Type type = new TypeToken<ModelResponse<Profesor>>(){}.getType();
+         Type type = new TypeToken<ModelResponse<Profesor>>() {
+         }.getType();
 
          return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.OK);
 
       } catch (Exception e) {
-        response.setMensaje("error al momento de guaradar el profe: " + e.getMessage()) ;
-         System.out.println("error al menonte de guardar profe: " + e.getMessage()) ;
+         response.setMensaje("error al momento de guaradar el profe: " + e.getMessage());
+         System.out.println("error al menonte de guardar profe: " + e.getMessage());
          response.setCodigo(500);
          return new ResponseEntity<>(gson.toJson(response), HttpStatus.INTERNAL_SERVER_ERROR);
       }
    }
+
+   @PostMapping(value = "/actualizarProfesor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+   public ResponseEntity<String> actualizarTutor(@RequestBody String profesorJSON) {
+      ModelResponse<Profesor> response = new ModelResponse<>();
+      Gson gson = new Gson();
+      try {
+         Profesor profesor = gson.fromJson(profesorJSON, Profesor.class);
+         if (profesor.getId() == null) {
+            response.setMensaje("id obligatorio");
+            response.setCodigo(400);
+            Type type = new TypeToken<ModelResponse<Profesor>>() {
+            }.getType();
+            return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.BAD_REQUEST);
+         }
+         Profesor profesorActualizado = profesorServico.guardarProfesor(profesor);
+         response.setMensaje("tutor actualizado con exito");
+         response.setCodigo(200);
+         response.setData(profesorActualizado);
+         Type type = new TypeToken<ModelResponse<Profesor>>() {
+         }.getType();
+         return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.OK);
+      } catch (Exception e) {
+         response.setMensaje("error al momento de actualizar el tutor: " + e.getMessage());
+         System.out.println("error al momento de actualizar el tutor: " + e.getMessage());
+         response.setCodigo(500);
+         return new ResponseEntity<>(gson.toJson(response), HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+   }
+
+   @DeleteMapping(value = "/eliminarProfesor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+   public ResponseEntity<String> eliminarProfesor(@RequestBody String profesorIdJSON) {
+      ModelResponse<Profesor> response = new ModelResponse<>();
+      Gson gson = new Gson();
+      Type type = new TypeToken<ModelResponse<Profesor>>() {
+      }.getType();
+      try {
+
+         Map<String, String> mapa = gson.fromJson(profesorIdJSON, new TypeToken<Map<String, String>>() {
+         }.getType());
+         String profesorId = mapa.get("id");
+
+         if (profesorServico.eliminarProfesor(profesorId)) {
+
+            response.setMensaje("tutor eliminado con exito");
+            response.setCodigo(200);
+            return new ResponseEntity<>(gson.toJson(response,type), HttpStatus.OK);
+         }
+         response.setMensaje("NO SE ENCONTRO EL PROFESOR");
+         System.out.println("NO SE ENCONTRO EL PROFESOR");
+         response.setCodigo(204);
+         return new ResponseEntity<>(gson.toJson(response,type), HttpStatus.NO_CONTENT);
+      } catch (Exception e) {
+         response.setMensaje("error al momento de actualizar el tutor: " + e.getMessage());
+         System.out.println("error al momento de actualizar el tutor: " + e.getMessage());
+         response.setCodigo(500);
+         return new ResponseEntity<>(gson.toJson(response,type), HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+   }
+
 
 }

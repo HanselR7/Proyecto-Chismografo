@@ -20,4 +20,16 @@ public class ProfesorServico {
     public Profesor guardarProfesor(Profesor profesor){
         return profesorRepository.save(profesor);
     }
+
+
+
+    public boolean eliminarProfesor(String profesorId){
+        if(profesorRepository.existsById(profesorId)){
+            profesorRepository.deleteById(profesorId);
+            return true;
+        }
+        return false;
+    }
+
+
 }
