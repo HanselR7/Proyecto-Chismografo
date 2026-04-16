@@ -24,4 +24,12 @@ public class TutorServicio {
     public Tutor guardarTutor(Tutor tutor) {
         return tutorRepository.save(tutor);
     }
+
+    public boolean eliminarTutor(String tutorId) {
+        if (tutorRepository.existsById(tutorId)) {
+            tutorRepository.deleteById(tutorId);
+            return true;
+        }
+        return false;
+    }
 }

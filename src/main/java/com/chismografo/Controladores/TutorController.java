@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tutor")
@@ -115,6 +116,33 @@ public class TutorController {
             System.out.println("Error al momento de actualizar al tutor: " + e.getMessage());
             response.setCodigo(500);
             return new ResponseEntity<>(gson.toJson(response), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping(value = "/eliminarTutor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> eliminarTutor(@RequestBody String tutorIdJSON) {
+        ModelResponse<Tutor> response = new ModelResponse<>();
+        Gson gson = new Gson();
+        Type type = new TypeToken<ModelResponse<Tutor>>(){}.getType();
+        try {
+            Map<String, String> mapa = gson.fromJson(tutorIdJSON, new TypeToken<Map<String, String>>(){}.getType());
+            String tutorId = mapa.get("id");
+
+            if (tutorServicio.eliminarTutor(tutorId)) {
+                response.setMensaje("Tutor eliminado con exito");
+                response.setCodigo(200);
+                return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.OK);
+            }
+
+            response.setMensaje("No se pudo borrar al tutor con id " + tutorId);
+            System.out.println("No se pudo borrar al tutor con id " + tutorId);
+            response.setCodigo(500);
+            return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            response.setMensaje("Error al momento de eliminar al tutor: " + e.getMessage());
+            System.out.println("Error al momento de eliminar al tutor: " + e.getMessage());
+            response.setCodigo(500);
+            return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
