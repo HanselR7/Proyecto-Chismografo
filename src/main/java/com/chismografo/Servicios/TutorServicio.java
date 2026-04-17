@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TutorServicio {
@@ -17,7 +18,7 @@ public class TutorServicio {
         return tutorRepository.findAll();
     }
 
-    public List<Tutor> obtenerTutoresPorRol() {
+    public Optional<List<Tutor>> obtenerTutoresPorRol() {
         return tutorRepository.findByRol("tutor");
     }
 
