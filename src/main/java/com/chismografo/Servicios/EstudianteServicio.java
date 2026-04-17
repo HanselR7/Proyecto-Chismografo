@@ -23,4 +23,14 @@ public class EstudianteServicio {
         return estudianteRepository.save(estudiante);
     }
 
+    public List<Estudiantes> obtenerEstudiantesByRol(){return  estudianteRepository.findByRol("estudiante");}
+
+    public boolean eliminarEstudiante(String estudianteId){
+        if(estudianteRepository.existsById(estudianteId)){
+            estudianteRepository.deleteById(estudianteId);
+            return true;
+        }
+        return false;
+    }
+
 }

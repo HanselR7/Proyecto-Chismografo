@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 //Esta clase funciona como una interfaz de base de datos, es decir que aqui ya iran las consultas directas (Las simples)
 public interface EstudianteRepository extends MongoRepository<Estudiantes, String> {
+    List<Estudiantes> findByRol(String rol);
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/estudiante")
@@ -26,12 +27,20 @@ public class EstudianteController {
     @GetMapping(value = "/obtenerEstudiantes", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> obtenerEstudiantes() {
         Gson gson = new Gson();
+        ModelResponse<List<Estudiantes>> response = new ModelResponse<>();
+        Type type = new TypeToken<ModelResponse<List<Estudiantes>>>() {
+        }.getType();
         try {
-            List<Estudiantes> estudiantes = estudianteServicio.obtenerTodosEstudiantes();
-            return ResponseEntity.ok(gson.toJson(estudiantes));
+            List<Estudiantes> estudiantes = estudianteServicio.obtenerEstudiantesByRol();
+            response.setMensaje("Resultados de los estudiantes.");
+            response.setCodigo(200);
+            response.setData(estudiantes);
+            return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("{\"error\": \"" + e.getMessage() + "\"}");
+            response.setMensaje("Error al obtener los estudiantes" + e.getMessage());
+            System.out.println("Error al obtener los estudiantes" + e.getMessage());
+            response.setCodigo(500);
+            return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -41,7 +50,8 @@ public class EstudianteController {
     public ResponseEntity<String> guardarEstudiante(@RequestBody String estdianteSinIDJSON) {
         ModelResponse<Estudiantes> response = new ModelResponse<>();
         Gson gson = new Gson();
-        Type type = new TypeToken<ModelResponse<Estudiantes>>() {}.getType();
+        Type type = new TypeToken<ModelResponse<Estudiantes>>() {
+        }.getType();
         try {
             Estudiantes estudianteSinID = gson.fromJson(estdianteSinIDJSON, Estudiantes.class);
             estudianteSinID.setRol("estudiante");
@@ -63,13 +73,14 @@ public class EstudianteController {
     public ResponseEntity<String> actualizarEstudiante(@RequestBody String estudianteJSON) {
         ModelResponse<Estudiantes> response = new ModelResponse<>();
         Gson gson = new Gson();
-        Type type = new TypeToken<ModelResponse<Estudiantes>>() {}.getType();
+        Type type = new TypeToken<ModelResponse<Estudiantes>>() {
+        }.getType();
         try {
             Estudiantes estudiante = gson.fromJson(estudianteJSON, Estudiantes.class);
             if (estudiante.getId() == null) {
                 response.setMensaje("ID obligatorio");
                 response.setCodigo(400);
-                        return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.BAD_REQUEST);
             }
 
             Estudiantes estudianteActualizado = estudianteServicio.guardarEstudiante(estudiante);
@@ -82,7 +93,33 @@ public class EstudianteController {
             response.setMensaje("Error al actualizar estudiante" + e.getMessage());
             System.out.println("Error al actualizar estudiante" + e.getMessage());
             response.setCodigo(500);
-                return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @DeleteMapping(value = "/eliminarEstudiante", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> eliminarEstudiante(@RequestBody String estudianteIdJSON) {
+        ModelResponse<Estudiantes> response = new ModelResponse<>();
+        Gson gson = new Gson();
+        Type type = new TypeToken<ModelResponse<Estudiantes>>() {}.getType();
+        try {
+            Map<String, String> mapa = gson.fromJson(estudianteIdJSON, new TypeToken<Map<String, String>>(){}.getType());
+            String estudianteId = mapa.get("id");
+            if (estudianteServicio.eliminarEstudiante(estudianteId)) {
+                response.setMensaje("Estudiante eliminado correctamente");
+                response.setCodigo(200);
+                return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.OK);
+            }
+            response.setMensaje("No se pudo eliminar al estudiante con id: " + estudianteId);
+            System.out.println("No se pudo eliminar al estudiante con id: " + estudianteId);
+            response.setCodigo(500);
+            return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            response.setMensaje("Error al momento de eliminar al estudiante" + e.getMessage());
+            System.out.println("Error al momento de eliminar al estudiante" + e.getMessage());
+            response.setCodigo(500);
+            return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
