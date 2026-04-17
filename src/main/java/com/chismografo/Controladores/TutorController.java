@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -23,46 +23,25 @@ public class TutorController {
     @Autowired
     private TutorServicio tutorServicio;
 
-    @GetMapping(value = "/obtenerTutores", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> obtenerTutores() {
-        Gson gson = new Gson();
-        try {
-            List<Tutor> tutores = tutorServicio.obtenerTodosTutores();
-            return ResponseEntity.ok(gson.toJson(tutores));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("{\"error\": \"" + e.getMessage() + "\"}");
+    @GetMapping("/obtenerTutoresPorRol")
+    public ResponseEntity<ModelResponse> obtenerTutoresPorRol() {
+        List<Tutor> lista = tutorServicio.obtenerTutoresPorRol().orElse(Collections.emptyList());
+
+        if (lista.isEmpty()) {
+            return ResponseEntity.status(204).body(
+                    ModelResponse.builder()
+                            .mensaje("No se encontraron tutores.")
+                            .codigo(204)
+                            .build());
         }
-    }
 
-    @GetMapping(value = "/obtenerTutoresPorRol", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> obtenerTutoresPorRol() {
-        ModelResponse<List<Tutor>> response = new ModelResponse<>();
-        Gson gson = new Gson();
-
-        try {
-            List<Tutor> lista = tutorServicio.obtenerTutoresPorRol();
-
-            if (lista == null || lista.isEmpty()) {
-                response.setMensaje("No se encontraron tutores.");
-                response.setCodigo(204);
-                response.setData(new ArrayList<>());
-            } else {
-                response.setMensaje("Tutores recuperados con éxito.");
-                response.setCodigo(200);
-                response.setData(lista);
-            }
-
-            Type type = new com.google.gson.reflect.TypeToken<ModelResponse<List<Tutor>>>(){}.getType();
-            String jsonFinal = gson.toJson(response, type);
-
-            return ResponseEntity.ok(jsonFinal);
-
-        } catch (Exception e) {
-            response.setMensaje("Error: " + e.getMessage());
-            response.setCodigo(500);
-            return new ResponseEntity<>(gson.toJson(response), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return ResponseEntity.status(200).body(
+                ModelResponse.builder()
+                        .mensaje("Tutores disponibles")
+                        .codigo(200)
+                        .data(lista)
+                        .build()
+        );
     }
 
     @PostMapping(value = "/guardarTutor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
