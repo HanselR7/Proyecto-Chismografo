@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 //Controllador, como tipo controlador
@@ -23,7 +24,8 @@ public class EstudianteServicio {
         return estudianteRepository.save(estudiante);
     }
 
-    public List<Estudiantes> obtenerEstudiantesByRol(){return  estudianteRepository.findByRol("estudiante");}
+    public Optional<List<Estudiantes>> obtenerEstudiantesByRol(){
+        return estudianteRepository.findByRol("estudiante");}
 
     public boolean eliminarEstudiante(String estudianteId){
         if(estudianteRepository.existsById(estudianteId)){

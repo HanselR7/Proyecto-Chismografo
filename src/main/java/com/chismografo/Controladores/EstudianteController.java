@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -25,23 +26,24 @@ public class EstudianteController {
     private EstudianteServicio estudianteServicio;
 
     @GetMapping(value = "/obtenerEstudiantes", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> obtenerEstudiantes() {
-        Gson gson = new Gson();
-        ModelResponse<List<Estudiantes>> response = new ModelResponse<>();
-        Type type = new TypeToken<ModelResponse<List<Estudiantes>>>() {
-        }.getType();
-        try {
-            List<Estudiantes> estudiantes = estudianteServicio.obtenerEstudiantesByRol();
-            response.setMensaje("Resultados de los estudiantes.");
-            response.setCodigo(200);
-            response.setData(estudiantes);
-            return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.OK);
-        } catch (Exception e) {
-            response.setMensaje("Error al obtener los estudiantes" + e.getMessage());
-            System.out.println("Error al obtener los estudiantes" + e.getMessage());
-            response.setCodigo(500);
-            return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ModelResponse> obtenerEstudiantes() {
+        List<Estudiantes> listaEstudiantes = estudianteServicio.obtenerEstudiantesByRol().orElse(Collections.emptyList());
+
+        if(listaEstudiantes.isEmpty()){
+            return ResponseEntity.status(204).body(
+                    ModelResponse.builder()
+                            .mensaje("No se encontraron estudiantes")
+                            .codigo(204)
+                            .build());
         }
+
+        return  ResponseEntity.status(200).body(
+                ModelResponse.builder()
+                        .mensaje("Estudiantes...")
+                        .codigo(200)
+                        .data(listaEstudiantes)
+                        .build()
+        );
     }
 
     /*produces = responder, cosume = consumir*/
