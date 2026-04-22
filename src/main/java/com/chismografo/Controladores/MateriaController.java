@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +44,27 @@ public class MateriaController {
             return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+ /*   @GetMapping("/obtenerMateriasById")
+    public ResponseEntity<ModelResponse <List<Materia>>> obtenerMateriasByTipo(){
+        List<Materia> listaMateriaByTipo = materiaServicio.obtenerMateriasByTipo().orElse(Collections.emptyList());
+        if (listaMateriaByTipo.isEmpty()){
+             return ResponseEntity.status(204).body(
+                     ModelResponse.<List<Materia>>builder()
+                             .mensaje("No se encontraron materias")
+                             .codigo(204)
+                             .data(Collections.emptyList())
+                             .build());
+        }
+
+        return ResponseEntity.status(200).body(
+                ModelResponse.<List<Materia>>builder()
+                        .mensaje("Materias encontradas")
+                        .codigo(200)
+                        .data(listaMateriaByTipo)
+                        .build()
+        );
+    }*/
 
     @PostMapping(value = "/guardarMateria", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> guardarMateria(@RequestBody String materiaSinIdJSON) {
@@ -117,4 +140,29 @@ public class MateriaController {
             return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/GuardarMateriaNuevo")
+    public ResponseEntity<ModelResponse<Materia>> guardarMateria (@RequestBody Materia materia){
+        Materia materiaNueva = materiaServicio.guardarMateria(materia);
+        if (materiaNueva == null){
+            return ResponseEntity.status(204).body(
+                    ModelResponse.<Materia>builder()
+                            .mensaje("No se encontraron materias")
+                            .codigo(204)
+                            .data(null)
+                            .build()
+            );
+        }
+
+        return ResponseEntity.status(200).body(
+                ModelResponse.<Materia>builder()
+                        .mensaje((materia.getId() == null) ? "Materia Agregada" : "Materia Actualizada")
+                        .codigo(200)
+                        .data(materiaNueva)
+                        .build()
+        );
+    }
+
+  /*  @DeleteMapping("eliminarMamalon")
+    public ResponseEntity<ModelResponse<Boolean>> eliminar(RequestBody )*/
 }

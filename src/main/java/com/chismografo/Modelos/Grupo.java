@@ -1,7 +1,6 @@
 package com.chismografo.Modelos;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -13,15 +12,17 @@ import java.util.List;
 @Data //Genara los Getters & Stters
 @NoArgsConstructor //Genera un constructor vacio
 @AllArgsConstructor //Genera el constructor con todos los atributos de la clase
-@Document(collection = "materias") //Enlazamos con nuestra coleccion de MongoDB
-@Builder //Para construir el objeto
+@Document(collection = "grupos") //Enlazamos con nuestra coleccion de MongoDB
 
-public class Materia {
+public class Grupo {
     /*Atributos de clase*/
-    @Id //Decimos que el siguiente atributo sera el id de la coleccion de mongo
-    private String id;
-    private String nombre;
-    private String abreviacion;
-    private String descripcion;
-    private int grado_escolar;
+    @Id //Indicamos que el siguiente atributo sera el id de la coleccion de mongo
+    private String id_grupo;
+    private String id_materia;
+    private String id_profesor;
+    private List<String> ids_estuduante;
+    private String nombre_grupo;
+    private String codigo_acceso;
+    private String grado;
+    private String hoarario_materia;
 }

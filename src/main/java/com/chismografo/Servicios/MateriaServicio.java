@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MateriaServicio {
@@ -17,6 +18,10 @@ public class MateriaServicio {
         return materiaRepository.findAll();
     }
 
+  /*  public Optional<List<Materia>> obtenerMateriasByTipo(){
+        return materiaRepository.findByTipo("Tipo");
+    }*/
+
     public Materia guardarMateria(Materia materia){
         return materiaRepository.save(materia);
     }
@@ -27,11 +32,6 @@ public class MateriaServicio {
             return true;
         }
         return false;
-    }
-
-    public Materia eliminarMateria (Materia materia){
-         materiaRepository.deleteById(materia.getId());
-        return materia;
     }
 
 
