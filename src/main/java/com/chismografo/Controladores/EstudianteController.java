@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
@@ -26,19 +27,20 @@ public class EstudianteController {
     private EstudianteServicio estudianteServicio;
 
     @GetMapping(value = "/obtenerEstudiantes", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ModelResponse> obtenerEstudiantes() {
+    public ResponseEntity<ModelResponse<List<Estudiantes>>> obtenerEstudiantes() {
         List<Estudiantes> listaEstudiantes = estudianteServicio.obtenerEstudiantesByRol().orElse(Collections.emptyList());
 
-        if(listaEstudiantes.isEmpty()){
+        if (listaEstudiantes.isEmpty()) {
             return ResponseEntity.status(204).body(
-                    ModelResponse.builder()
+                    ModelResponse.<List<Estudiantes>>builder()
                             .mensaje("No se encontraron estudiantes")
                             .codigo(204)
+                            .data(Collections.emptyList())
                             .build());
         }
 
-        return  ResponseEntity.status(200).body(
-                ModelResponse.builder()
+        return ResponseEntity.status(200).body(
+                ModelResponse.<List<Estudiantes>>builder()
                         .mensaje("Estudiantes...")
                         .codigo(200)
                         .data(listaEstudiantes)
@@ -69,6 +71,29 @@ public class EstudianteController {
             response.setCodigo(500);
             return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping("/guardarEstudiantePro")
+    public ResponseEntity<ModelResponse<Estudiantes>> guardarEstudiantePro(@RequestBody Estudiantes estudiante) {
+        estudiante.setRol("estudiante");
+
+        Estudiantes estudianteNuevo = estudianteServicio.guardarEstudiante(estudiante);
+        if (estudianteNuevo == null) {
+            return ResponseEntity.status(204).body(
+                    ModelResponse.<Estudiantes>builder()
+                            .mensaje("No se encontraron estudiantes")
+                            .codigo(204)
+                            .data(null)
+                            .build()
+            );
+        }
+        return ResponseEntity.status(200).body(
+                ModelResponse.<Estudiantes>builder()
+                        .mensaje((estudiante.getId().equals("")) ? "Estudiante agregado" : "Estudiante actualizado")
+                        .codigo(200)
+                        .data(estudianteNuevo)
+                        .build()
+        );
     }
 
     @PostMapping(value = "/actualizarEstudiante", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -103,9 +128,11 @@ public class EstudianteController {
     public ResponseEntity<String> eliminarEstudiante(@RequestBody String estudianteIdJSON) {
         ModelResponse<Estudiantes> response = new ModelResponse<>();
         Gson gson = new Gson();
-        Type type = new TypeToken<ModelResponse<Estudiantes>>() {}.getType();
+        Type type = new TypeToken<ModelResponse<Estudiantes>>() {
+        }.getType();
         try {
-            Map<String, String> mapa = gson.fromJson(estudianteIdJSON, new TypeToken<Map<String, String>>(){}.getType());
+            Map<String, String> mapa = gson.fromJson(estudianteIdJSON, new TypeToken<Map<String, String>>() {
+            }.getType());
             String estudianteId = mapa.get("id");
             if (estudianteServicio.eliminarEstudiante(estudianteId)) {
                 response.setMensaje("Estudiante eliminado correctamente");
@@ -123,5 +150,9 @@ public class EstudianteController {
             return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    /*@DeleteMapping("/eliminarEstudiantePendejo")
+    public ResponseEntity<ModelResponse<Boolean>> eliminarEstudiantePendejo(@RequestBody) {
+    }*/
 
 }
