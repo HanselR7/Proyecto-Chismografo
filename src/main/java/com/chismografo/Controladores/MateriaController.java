@@ -45,27 +45,6 @@ public class MateriaController {
         }
     }
 
- /*   @GetMapping("/obtenerMateriasById")
-    public ResponseEntity<ModelResponse <List<Materia>>> obtenerMateriasByTipo(){
-        List<Materia> listaMateriaByTipo = materiaServicio.obtenerMateriasByTipo().orElse(Collections.emptyList());
-        if (listaMateriaByTipo.isEmpty()){
-             return ResponseEntity.status(204).body(
-                     ModelResponse.<List<Materia>>builder()
-                             .mensaje("No se encontraron materias")
-                             .codigo(204)
-                             .data(Collections.emptyList())
-                             .build());
-        }
-
-        return ResponseEntity.status(200).body(
-                ModelResponse.<List<Materia>>builder()
-                        .mensaje("Materias encontradas")
-                        .codigo(200)
-                        .data(listaMateriaByTipo)
-                        .build()
-        );
-    }*/
-
     @PostMapping(value = "/guardarMateria", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> guardarMateria(@RequestBody String materiaSinIdJSON) {
         ModelResponse<Materia> response = new ModelResponse<>();
@@ -141,6 +120,27 @@ public class MateriaController {
         }
     }
 
+    @DeleteMapping("/deleteMat")
+    public ResponseEntity<ModelResponse<Boolean>> elimiarMateria (@RequestBody Materia materiaEliminada){
+        String id_materiaEliminada = materiaEliminada.getId();
+        if (id_materiaEliminada.equals("")){
+            return ResponseEntity.status(200).body(
+                    ModelResponse.<Boolean>builder()
+                            .mensaje("No se encontraron materias con el solicitado")
+                            .codigo(204)
+                            .data(null)
+                            .build()
+            );
+        }
+        materiaServicio.elimiarMateria(id_materiaEliminada);
+        return ResponseEntity.status(200).body(
+                ModelResponse.<Boolean>builder()
+                        .mensaje("Materia Eliminada")
+                        .codigo(200)
+                        .build()
+        );
+    }
+
     @PostMapping("/GuardarMateriaNuevo")
     public ResponseEntity<ModelResponse<Materia>> guardarMateria (@RequestBody Materia materia){
         Materia materiaNueva = materiaServicio.guardarMateria(materia);
@@ -163,6 +163,4 @@ public class MateriaController {
         );
     }
 
-  /*  @DeleteMapping("eliminarMamalon")
-    public ResponseEntity<ModelResponse<Boolean>> eliminar(RequestBody )*/
 }
