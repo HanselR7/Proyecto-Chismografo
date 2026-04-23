@@ -24,19 +24,20 @@ public class TutorController {
     private TutorServicio tutorServicio;
 
     @GetMapping("/obtenerTutoresPorRol")
-    public ResponseEntity<ModelResponse> obtenerTutoresPorRol() {
+    public ResponseEntity<ModelResponse<List<Tutor>>> obtenerTutoresPorRol() {
         List<Tutor> lista = tutorServicio.obtenerTutoresPorRol().orElse(Collections.emptyList());
 
         if (lista.isEmpty()) {
             return ResponseEntity.status(204).body(
-                    ModelResponse.builder()
+                    ModelResponse.<List<Tutor>>builder()
                             .mensaje("No se encontraron tutores.")
                             .codigo(204)
+                            .data(Collections.emptyList())
                             .build());
         }
 
         return ResponseEntity.status(200).body(
-                ModelResponse.builder()
+                ModelResponse.<List<Tutor>>builder()
                         .mensaje("Tutores disponibles")
                         .codigo(200)
                         .data(lista)
@@ -44,8 +45,8 @@ public class TutorController {
         );
     }
 
-    @PostMapping(value = "/guardarTutor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> guardarTutor(@RequestBody String tutorSinIDJSON) {
+    @PostMapping(value = "/guardarTutorAntiguo", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> guardarTutorAntiguo(@RequestBody String tutorSinIDJSON) {
         ModelResponse<Tutor> response = new ModelResponse<>();
         Gson gson = new Gson();
 
@@ -67,6 +68,31 @@ public class TutorController {
             response.setCodigo(500);
             return new ResponseEntity<>(gson.toJson(response), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping("/guardarTutor")
+    public ResponseEntity<ModelResponse<Tutor>> guardarTutor(@RequestBody Tutor tutor) {
+        tutor.setRol("tutor");
+
+        Tutor tutorNuevo = tutorServicio.guardarTutor(tutor);
+
+        if (tutorNuevo == null) {
+            return ResponseEntity.status(204).body(
+                    ModelResponse.<Tutor>builder()
+                            .mensaje("No se encontraron tutores.")
+                            .codigo(204)
+                            .data(null)
+                            .build()
+            );
+        }
+
+        return ResponseEntity.status(200).body(
+                ModelResponse.<Tutor>builder()
+                        .mensaje((tutor.getId().equals("")) ? "Tutor agregado." : "Tutor actualizado.")
+                        .codigo(200)
+                        .data(tutorNuevo)
+                        .build()
+        );
     }
 
     @PostMapping(value = "/actualizarTutor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -98,7 +124,7 @@ public class TutorController {
         }
     }
 
-    @DeleteMapping(value = "/eliminarTutor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/eliminarTutorAntiguo", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> eliminarTutor(@RequestBody String tutorIdJSON) {
         ModelResponse<Tutor> response = new ModelResponse<>();
         Gson gson = new Gson();
@@ -124,4 +150,7 @@ public class TutorController {
             return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+//    @DeleteMapping("/eliminarTutor")
+//    public ResponseEntity<ModelResponse<Boolean>> eliminar(@RequestBody )
 }
