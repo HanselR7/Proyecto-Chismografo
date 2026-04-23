@@ -26,12 +26,12 @@ public class EstudianteController {
     @Autowired
     private EstudianteServicio estudianteServicio;
 
-    @GetMapping(value = "/obtenerEstudiantes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/obtenerEstudiantes")
     public ResponseEntity<ModelResponse<List<Estudiantes>>> obtenerEstudiantes() {
         List<Estudiantes> listaEstudiantes = estudianteServicio.obtenerEstudiantesByRol().orElse(Collections.emptyList());
 
         if (listaEstudiantes.isEmpty()) {
-            return ResponseEntity.status(204).body(
+            return ResponseEntity.status(200).body(
                     ModelResponse.<List<Estudiantes>>builder()
                             .mensaje("No se encontraron estudiantes")
                             .codigo(204)
@@ -96,7 +96,7 @@ public class EstudianteController {
         );
     }
 
-    @PostMapping(value = "/actualizarEstudiante", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  /*  @PostMapping(value = "/actualizarEstudiante", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> actualizarEstudiante(@RequestBody String estudianteJSON) {
         ModelResponse<Estudiantes> response = new ModelResponse<>();
         Gson gson = new Gson();
@@ -122,9 +122,9 @@ public class EstudianteController {
             response.setCodigo(500);
             return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+    }*/
 
-    @DeleteMapping(value = "/eliminarEstudiante", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+ /*   @DeleteMapping(value = "/eliminarEstudiante", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> eliminarEstudiante(@RequestBody String estudianteIdJSON) {
         ModelResponse<Estudiantes> response = new ModelResponse<>();
         Gson gson = new Gson();
@@ -149,10 +149,24 @@ public class EstudianteController {
             response.setCodigo(500);
             return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    /*@DeleteMapping("/eliminarEstudiantePendejo")
-    public ResponseEntity<ModelResponse<Boolean>> eliminarEstudiantePendejo(@RequestBody) {
     }*/
+
+    @DeleteMapping("/eliminarEstudiantePro")
+    public ResponseEntity<ModelResponse<Boolean>> eliminarEstudiantePro(@RequestBody Estudiantes idEstudiante) {
+        if (estudianteServicio.eliminarEstudiante(idEstudiante.getId())) {
+            return ResponseEntity.status(200).body(
+                    ModelResponse.<Boolean>builder()
+                            .mensaje("Estudiante eliminado correctamente")
+                            .codigo(200)
+                            .build()
+            );
+        }
+        return ResponseEntity.status(204).body(
+                ModelResponse.<Boolean>builder()
+                        .mensaje("Ha ocurrido un error al eliminar el estudiante")
+                        .codigo(204)
+                        .build()
+        );
+    }
 
 }
