@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data //Genara los Getters & Stters
 @NoArgsConstructor //Genera un constructor vacio
 @AllArgsConstructor //Genera el constructor con todos los atributos de la clase
@@ -23,5 +20,5 @@ public class Materia {
     private String nombre;
     private String abreviacion;
     private String descripcion;
-    private int grado_escolar;
+    private Integer grado_escolar;
 }
