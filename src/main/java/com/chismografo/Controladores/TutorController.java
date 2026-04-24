@@ -88,7 +88,7 @@ public class TutorController {
 
         return ResponseEntity.status(200).body(
                 ModelResponse.<Tutor>builder()
-                        .mensaje((tutor.getId().equals("")) ? "Tutor agregado." : "Tutor actualizado.")
+                        .mensaje((tutor.getId().isEmpty()) ? "Tutor agregado." : "Tutor actualizado.")
                         .codigo(200)
                         .data(tutorNuevo)
                         .build()
@@ -151,6 +151,22 @@ public class TutorController {
         }
     }
 
-//    @DeleteMapping("/eliminarTutor")
-//    public ResponseEntity<ModelResponse<Boolean>> eliminar(@RequestBody )
+    @DeleteMapping("/eliminarTutor")
+    public ResponseEntity<ModelResponse<Boolean>> eliminar(@RequestBody Tutor tutor) {
+        if (tutorServicio.eliminarTutor(tutor.getId())) {
+            return ResponseEntity.ok().body(
+                    ModelResponse.<Boolean>builder()
+                            .mensaje("Tutor eliminado con exito")
+                            .codigo(200)
+                            .build()
+            );
+        }
+
+        return ResponseEntity.ok().body(
+                ModelResponse.<Boolean>builder()
+                        .mensaje("No se pudo borrar al tutor con id " + tutor.getId())
+                        .codigo(204)
+                        .build()
+        );
+    }
 }
