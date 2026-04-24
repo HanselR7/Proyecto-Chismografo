@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -25,16 +24,7 @@ public class TutorController {
 
     @GetMapping("/obtenerTutoresPorRol")
     public ResponseEntity<ModelResponse<List<Tutor>>> obtenerTutoresPorRol() {
-        List<Tutor> lista = tutorServicio.obtenerTutoresPorRol().orElse(Collections.emptyList());
-
-        if (lista.isEmpty()) {
-            return ResponseEntity.status(204).body(
-                    ModelResponse.<List<Tutor>>builder()
-                            .mensaje("No se encontraron tutores.")
-                            .codigo(204)
-                            .data(Collections.emptyList())
-                            .build());
-        }
+        List<Tutor> lista = tutorServicio.obtenerTutoresPorRol();
 
         return ResponseEntity.status(200).body(
                 ModelResponse.<List<Tutor>>builder()
