@@ -20,5 +20,5 @@ public class Materia {
     private String nombre;
     private String abreviacion;
     private String descripcion;
-    private Integer grado_escolar;
+    private Integer gradoEscolar;
 }

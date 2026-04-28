@@ -1,5 +1,7 @@
 package com.chismografo.Servicios;
 
+import com.chismografo.Exceptions.MateriaExceptions;
+import com.chismografo.Exceptions.MateriaType;
 import com.chismografo.Modelos.Materia;
 import com.chismografo.Repositorios.MateriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,6 @@ public class MateriaServicio {
         return materiaRepository.findAll();
     }
 
-  /*  public Optional<List<Materia>> obtenerMateriasByTipo(){
-        return materiaRepository.findByTipo("Tipo");
-    }*/
-
     public Materia guardarMateria(Materia materia){
         return materiaRepository.save(materia);
     }
@@ -32,6 +30,14 @@ public class MateriaServicio {
             return true;
         }
         return false;
+    }
+
+    public List<Materia> obtenerMateriaByGrado (Integer grado){
+        List<Materia> lista = materiaRepository.findByGradoEscolar(grado);
+        if (lista.isEmpty()){
+            throw new MateriaExceptions(MateriaType.NOT_MATERIA_CONTENT);
+        }
+        return lista;
     }
 
 

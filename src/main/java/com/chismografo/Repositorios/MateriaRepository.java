@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository //Generador de consultas
 public interface MateriaRepository extends MongoRepository<Materia, String> {
 
+    List<Materia> findByGradoEscolar(Integer grado);
 }

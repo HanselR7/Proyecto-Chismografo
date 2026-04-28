@@ -41,6 +41,18 @@ public class MateriaController {
         }
     }
 
+    @GetMapping("/obtenerMateriasByGrado")
+    public ResponseEntity<ModelResponse<List<Materia>>> obtenerMateriasByGrado(@RequestBody Materia materia){
+        List<Materia> materiaByGradoEncontrada = materiaServicio.obtenerMateriaByGrado(materia.getGradoEscolar());
+        return ResponseEntity.status(200).body(
+                ModelResponse.<List<Materia>>builder()
+                        .mensaje("Materias Encontradas")
+                        .codigo(200)
+                        .data(materiaByGradoEncontrada)
+                        .build()
+        );
+    }
+
     @PostMapping(value = "/guardarMateria", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> guardarMateria(@RequestBody String materiaSinIdJSON) {
         ModelResponse<Materia> response = new ModelResponse<>();
