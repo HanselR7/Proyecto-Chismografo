@@ -1,12 +1,13 @@
 package com.chismografo.Servicios;
 
+import com.chismografo.Exceptions.TutorExceptions;
+import com.chismografo.Exceptions.TutorType;
 import com.chismografo.Modelos.Tutor;
 import com.chismografo.Repositorios.TutorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TutorServicio {
@@ -18,8 +19,12 @@ public class TutorServicio {
         return tutorRepository.findAll();
     }
 
-    public Optional<List<Tutor>> obtenerTutoresPorRol() {
-        return tutorRepository.findByRol("tutor");
+    public List<Tutor> obtenerTutoresPorRol() {
+        List<Tutor> lista = tutorRepository.findByRol("tutor");
+        if (lista.isEmpty()) {
+            throw new TutorExceptions(TutorType.NOT_TUTOR_CONTENT);
+        }
+        return lista;
     }
 
     public Tutor guardarTutor(Tutor tutor) {

@@ -35,19 +35,11 @@ public class TutorController {
     }
 
     @GetMapping("/obtenerTutoresPorRol")
-    public ResponseEntity<ModelResponse> obtenerTutoresPorRol() {
-        List<Tutor> lista = tutorServicio.obtenerTutoresPorRol().orElse(Collections.emptyList());
-
-        if (lista.isEmpty()) {
-            return ResponseEntity.status(204)
-                    .body(ModelResponse.builder()
-                            .mensaje("No se encontraron tutores")
-                            .codigo(200)
-                            .build());
-        }
+    public ResponseEntity<ModelResponse<List<Tutor>>> obtenerTutoresPorRol() {
+        List<Tutor> lista = tutorServicio.obtenerTutoresPorRol();
 
         return ResponseEntity.ok(
-                ModelResponse.builder()
+                ModelResponse.<List<Tutor>>builder()
                         .mensaje("Tutores disponibles")
                         .codigo(200)
                         .data(lista)
