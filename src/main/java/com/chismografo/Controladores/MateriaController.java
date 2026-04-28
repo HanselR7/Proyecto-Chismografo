@@ -5,17 +5,13 @@ import com.chismografo.Servicios.MateriaServicio;
 import com.chismografo.utils.ModelResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
