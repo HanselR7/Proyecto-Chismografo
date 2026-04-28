@@ -28,16 +28,7 @@ public class EstudianteController {
 
     @GetMapping("/obtenerEstudiantes")
     public ResponseEntity<ModelResponse<List<Estudiantes>>> obtenerEstudiantes() {
-        List<Estudiantes> listaEstudiantes = estudianteServicio.obtenerEstudiantesByRol().orElse(Collections.emptyList());
-
-        if (listaEstudiantes.isEmpty()) {
-            return ResponseEntity.status(200).body(
-                    ModelResponse.<List<Estudiantes>>builder()
-                            .mensaje("No se encontraron estudiantes")
-                            .codigo(204)
-                            .data(Collections.emptyList())
-                            .build());
-        }
+        List<Estudiantes> listaEstudiantes = estudianteServicio.obtenerEstudiantesByRol();
 
         return ResponseEntity.status(200).body(
                 ModelResponse.<List<Estudiantes>>builder()
