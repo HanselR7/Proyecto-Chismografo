@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProfesorServico {
@@ -16,19 +15,22 @@ public class ProfesorServico {
     @Autowired
     private ProfesorRepository profesorRepository;
 
-    public Optional<List<Profesor>> obtenerProfesores(){
+    public List<Profesor> obtenerProfesores(){
+
         return profesorRepository.findAll();
     }
 
     public Profesor guardarProfesor(Profesor profesor){
+
         return profesorRepository.save(profesor);
     }
 
-    public Optional<List<Profesor>> obtenerProfesoresByRol(){
-     List<Profesor> lista = profesorRepository.findByRol("profesor");
-     if(lista.isEmpty()){
-         throw new ProfesorExceptions(ProfesorType.NOT_PROFESOR_CONTENT);
-     }
+    public List<Profesor> obtenerProfesoresByRol() {
+        List<Profesor> listaEstudiantes = profesorRepository.findByRol("estudiante");
+        if(listaEstudiantes.isEmpty()){
+            throw new ProfesorExceptions(ProfesorType.NOT_PROFESOR_CONTENT);
+        }
+        return listaEstudiantes;
     }
 
     public boolean eliminarProfesor(String profesorId){

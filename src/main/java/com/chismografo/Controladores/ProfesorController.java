@@ -2,7 +2,6 @@ package com.chismografo.Controladores;
 
 import com.chismografo.Modelos.Profesor;
 
-import com.chismografo.Modelos.Tutor;
 import com.chismografo.Servicios.ProfesorServico;
 
 import com.chismografo.utils.ModelResponse;
@@ -15,22 +14,21 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/profesor")
-public class profeController {
+@RequestMapping("/api/profesor") //Un endpoint es una URL de tu aplicación a la que alguien puede "tocar" para pedir o mandar algo.Como una puerta — cada puerta hace una cosa diferente: Eso es todo, es simplemente una dirección que hace algo.
+public class ProfesorController {
+
    @Autowired
    private ProfesorServico profesorServico;
 
 
 
    @GetMapping(value = "/obtenerProfesores", produces = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<ModelResponse<List<Profesor>>> obtenerEstudiantes() {
-      List<Profesor> listaEstudiantes = profesorServico.obtenerProfesores();
+   public ResponseEntity<ModelResponse<List<Profesor>>> obtenerProfesores() {
+      List<Profesor> listaEstudiantes = profesorServico.obtenerProfesoresByRol();
 
 
 
@@ -46,7 +44,9 @@ public class profeController {
 
 
    @PostMapping(value = "/guardarProfesor", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+   //        ↓↓↓↓↓↓↓↓↓↓↓ esta anotación es la que atrapa el JSON
    public ResponseEntity<String> guardarProfesor(@RequestBody String profesorSinIDjSDN) {
+
       ModelResponse<Profesor> response = new ModelResponse<>();
       Gson gson = new Gson();
       try {
@@ -73,7 +73,7 @@ public class profeController {
    }
 
    @PostMapping(value = "/actualizarProfesor", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-   public ResponseEntity<String> actualizarTutor(@RequestBody String profesorJSON) {
+   public ResponseEntity<String> actualizarProfesor(@RequestBody String profesorJSON) {
       ModelResponse<Profesor> response = new ModelResponse<>();
       Gson gson = new Gson();
       try {
@@ -86,7 +86,7 @@ public class profeController {
             return new ResponseEntity<>(gson.toJson(response, type), HttpStatus.BAD_REQUEST);
          }
          Profesor profesorActualizado = profesorServico.guardarProfesor(profesor);
-         response.setMensaje("tutor actualizado con exito");
+         response.setMensaje("profesor actualizado con exito");
          response.setCodigo(200);
          response.setData(profesorActualizado);
          Type type = new TypeToken<ModelResponse<Profesor>>() {
@@ -131,7 +131,10 @@ public class profeController {
    }
 
    @PostMapping("/guardarProfePro")
+   //         ↓↓↓↓↓↓↓↓↓↓↓ esta anotación es la que atrapa el JSON
    public ResponseEntity<ModelResponse<Profesor>> guardarProfePro(@RequestBody Profesor profesor) {
+                           //                                                  ↑↑↑↑↑↑↑↑
+                          //                           aquí Spring convierte el JSON en objeto Java
       profesor.setRol("profesor");
 
       Profesor ProfesorNuevo = profesorServico.guardarProfesor(profesor);

@@ -10,11 +10,11 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalErrorException {
 @ExceptionHandler(ProfesorExceptions.class)
-    public ResponseEntity<ModelResponse> handleException(){
+    public ResponseEntity<ModelResponse> handleProfesorException(ProfesorExceptions profesorExceptions){
     return ResponseEntity.ok(
             ModelResponse.builder()
-                    .mensaje(e.getMessage)
-                    .codigo(e.getStatus().value())
+                    .mensaje(profesorExceptions.getMessage())
+                    .codigo(profesorExceptions.getStatus().value())
                     .build()
     );
 
